@@ -1,5 +1,5 @@
 
-# datING Progress Journal
+# datING Project Group
 
 ## Case Study: Welcome to University
 
