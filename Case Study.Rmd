@@ -1,0 +1,136 @@
+---
+title: "Case Study: Welcome to University"
+author: "datING - BDA 503 - Fall 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+*************
+
+In this case study our group are going to explore university entrance examinations (YGS/LYS) data from 2017. 
+
+**Requested:** 
+
+MEF University management asks you to examine the data and provide insights that are useful to understand MEF University's place among its competitors and in the undergraduate market. Our technical team cleaned up the data for you as best as they can (you can check the raw data from here). Data is provided with the following commands and necessary information can be found below. You should explicitly state your code and process with clear communication. Assume management knows a bit of R and would like to reproduce your work in case there is any problem with the calculations. The university is not interested in universities abroad (IDs that start with 3 or 4).
+
+
+**Data load**
+
+```{r}
+
+# Download from GitHub (do it only once)
+download.file("https://mef-bda503.github.io/files/osym_data_2017.RData",
+               "osym_data_2017.RData")
+
+#Install tidyverse if not already installed
+ if (!("tidyverse" %in% installed.packages())) {
+   install.packages("tidyverse", repos = "https://cran.pau.edu.tr")
+ }
+# Load tidyverse package
+library(tidyverse)
+
+# Load the data
+load("osym_data_2017.RData")
+```
+
+
+```{r}
+      
+# Nature of rows and columns/quick review of dataset
+library(dplyr)
+options(dplyr.width=Inf)
+
+library(readr)
+glimpse(osym_data_2017)
+```
+
+###**Analysis of OSYM 2017 Data**
+
+We filtered abroad universities that university management is not interested(IDs that start with 3 or 4)
+
+```{r}
+#Filtered abroad university 
+except_abroad <- osym_data_2017 %>% filter(program_id<300000000)
+```
+
+We compared averaged min scores.
+
+```{r}
+#Comparing Engineering Faculties avarage of Min Scores of each program between MEF & The Other Universities s
+
+mef_uni <- except_abroad %>% filter(university_name == "MEF ÜNIVERSITESI")
+
+mef_uni_muh <- mef_uni %>% filter(faculty_name == "Mühendislik Fakültesi")
+
+min(mef_uni_muh$min_score) 
+
+max(mef_uni_muh$min_score)
+
+other_uni_muh <-  except_abroad %>% filter(faculty_name == "Mühendislik Fakültesi")
+
+mean(mef_uni_muh$min_score)
+
+mean(other_uni_muh$min_score)
+
+```
+
+
+###**Assignments of data**
+
+```{r}
+#Distinct faculties of all univerties
+faculties <- except_abroad %>% distinct(university_name, faculty_name, .keep_all = TRUE)
+
+#Distinct faculties of MEF univerties
+mef_faculties <- mef_uni %>% distinct(university_name, faculty_name, .keep_all = TRUE)
+
+#Mef total quota group by its faculties
+mef_faculty_quota <- except_abroad %>% 
+  filter(university_name == "MEF ÜNIVERSITESI") %>%  
+  group_by(faculty_name) %>% 
+  summarise(count=n(), total_quota = sum(general_quota))
+
+# Total quota of Engineering Faculty of MEF
+mef_uni_muh_quota <- mef_uni_muh %>%  
+  summarise( count=n(), total_quota = sum(general_quota))
+
+# All engineering faculties of univeresities in Istanbul
+total_uni_muh_ist <-  other_uni_muh %>% filter(city == "ISTANBUL")
+
+#Average quota of Engineering Faculty of the other universites in Istanbul
+other_ist_muh_quota <- total_uni_muh_ist %>%  
+  summarise( count=n(), total_quota = mean(general_quota))
+
+```
+
+
+###**Data Visualization**
+
+This data shows quota of universities in Istanbul
+
+```{r}
+# Quota of Engineering Faculty of the each universites in Istanbul
+total_eng_faculty_quota <- except_abroad %>% 
+  filter(city == "Ä°STANBUL" & faculty_name == "Mühendislik Fakültesi") %>%  
+  group_by(university_name, faculty_name) %>% 
+  summarise(count_of_program_name=n(), total_quota = sum(general_quota))
+
+``` 
+  
+
+Visualize data in bar chart.
+
+```{r}
+library(ggplot2)
+
+ggplot(data=total_eng_faculty_quota, aes(x=reorder(university_name,-total_quota),y=total_quota, fill=time)) +
+  geom_bar(colour="black", fill="#e67e22", width=.5, stat="identity",aes(fill=university_name=='MEF ÜNIVERSITESI')) +
+  guides(fill=FALSE) +
+  xlab("University_Name") + ylab("Total_Quota") + 
+  ggtitle("Quota of Engineering Faculty of Universites in Istanbul")+
+  theme(axis.text.x = element_text(angle=90, size=6))
+
+```
