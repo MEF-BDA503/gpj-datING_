@@ -1,5 +1,7 @@
 
-# datING Project Group
+## Proposal Phase of datING Project Group
+
++ You can see the proposal phase of our group project [here](files/GTD/GTD.html)
 
 ## Case Study: Welcome to University
 
