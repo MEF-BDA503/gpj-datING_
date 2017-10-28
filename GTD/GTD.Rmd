@@ -1,0 +1,188 @@
+---
+title: "Proposal Phase of Project"
+author: "datING - BDA 503 - Fall 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+*************
+
+## Group name 
+  + **datING**
+
+## Group members 
+  1. Bilge Uzuner
+  2. Sefa Erbas
+  3. Türkan Sevgili
+  
+## Data
+  + Global Terrorism Data
+  
+  
+#### Description:
+  
+The Global Terrorism Database ([GTD](http://start.umd.edu/gtd/about/)) includes information on terrorist events around the World (205 countries,  more than 33000 cities, from 1970 through 2016 on at least 45 variables for each case, with more recent incidents including information on more than 120 variables
+
+
+
+#### Content and Data fields:
+  
+***Geography:*** Worldwide
+
+***Time period:*** 1970-2016, except 1993
+
+***Unit of analysis:*** Attack
+
+***Variables:*** >100 variables on location, tactics, perpetrators, targets, and outcomes
+
+***Sources:*** Unclassified media articles
+
+
+Necessary information about mostly used fields can be found below. You can see the [GTD Codebook](http://start.umd.edu/gtd/downloads/Codebook.pdf) for broadly explained definitons on fields, important details on data collection methodology, definitions, and coding schema. 
+
++ `eventid:` Incidents from the GTD follow a 12-digit Event ID system.
++ `iyear:` This field contains the year in which the incident occurred. 
++ `imonth:` This field contains the number of the month in which the incident occurred.
++ `iday:` This field contains the numeric day of the month on which the incident occurred.
++ `country:` This field identifies the country code country or location where the incident occurred.
++ `region:` This field identifies the region code in which the incident occurred.
++ `provstate:` This variable records the name (at the time of event) of the 1st order subnational administrative region in which the event occurs.
++ `city:` This field contains the name of the city, village, or town in which the incident occurred.
++ `latitude:` This field records the latitude (based on WGS1984 standards) of the city in which the event occurred.
++ `longitude:` This field records the longitude (based on WGS1984 standards) of the city in which the event occurred.
++ `location:` This field is used to specify additional information about the location of the incident.
++ `success:` Success of a terrorist strike is defined according to the tangible effects of the attack. Success is not judged in terms of the larger goals of the perpetrators.
+
+## Objectives
+
+  + The purpose of the analysis is to understand the Turkey's Terorism Statistics on the basis of the cities, districts, dates, seasons etc.
+  
+  + Try to define the factors that influence the terror attacks in Turkey.
+  
+  + A clear understanding of the data to see if we can locate useful insights about where and when terror attacks occur in Turkey.
+  
+  + To create an opinion on the relatively risky and secure regions based on past experience, by in-depth analysis of the terrorist attacks in Turkey, also to see relatively safe and risky periods during the year.
+
+  
+## Tentative Plan
+
+
+Activity | Deadline
+------------- | -------------
+Peer Review of Proposal Phase | Oct. 29 - 31
+Minimal Working Report studies| Nov 1 - Dec 1
+Minimal Working Report Peer Review | Dec. 8
+Final Report studies | Dec. 10- 15
+Peraparation of Presentation | Dec. 10- 15
+FR/Presentation Peer Review | Dec. 20- 22
+
+
+## Abstract
+
+***Definition of terrorism:*** "The threatened or actual use of illegal force and violence by a non-state actor to attain a political, economic, religious, or social goal through fear, coercion, or intimidation."
+
+
+  Terrorism is the largest human-oriented criminal organization that has become a common problem globally. Nowadays, it is known that the underlying reason of most of today's terrorist activities is strategic actions and international purposes. Terrorist attacks in a country can take place because of interior reasons (economic prosperity, socio-cultural, educational system) or other factors. The most important of factor is the geopolitical position of the country.
+
+  It is known that Turkey is the target of many terrorist organizations because it is a bridge in the point where the European, Asian and African continents are connected and it is close to the oil resources in the Middle East where there is a continuous and multifaceted conflict of interests and powers that can affect the world power balance.
+In this work, we will analyze the various details of terrorist acts in Turkey over the past 30 years. We will also do a comparative analysis to draw inferences about the impact of geopolitical location on the frequency of terrorist attacks, ignoring the other factors. We will compare the details of terrorist attacks from the view of specific aspects with Indonesia, which has almost the same economic size as Turkey and whose people are mostly Muslims.
+
+
+## Initial Analysis
+
++ Some initial exploratory analysis of GTD dataset and Turkey terrorism statistics can be found below.
+
+```{r,echo=FALSE,results="hide",include=FALSE}
+# Helpful packages to load in 
+library(dplyr)
+library(ggplot2) # Data visualization
+library(readr) # Read_csv function
+
+# Get all data
+gtd = read.csv("D:/Users/tkartalkaya/Desktop/globalterrorismdb_0617dist.csv", stringsAsFactors = TRUE)
+
+# Summary of gtd structure
+# str(gtd)
+glimpse(gtd)
+
+# subset it to attacks in Turkey
+turkey.gtd <- gtd[gtd$country == 209,]
+
+# Summary of turkey.gtd structure
+# str(turkey.gtd)
+glimpse(turkey.gtd)
+```
+
+
+```{r}
+
+# Select columns that will use in EDA
+gtd.turkey = select (turkey.gtd , eventid, year = iyear, month = imonth, day=iday, country_code = country, 
+                     country_name=country_txt,region_code=region, region_name=region_txt, provstate,city,
+                     latitude,longitude,location,success, attacktype1=attacktype1_txt, 
+                     attacktype2=attacktype2_txt,attacktype3=attacktype3_txt,targtype1=targtype1_txt,
+                     targsubtype1=targsubtype1_txt,weaptype1=weaptype1_txt, weapsubtype1=weapsubtype1_txt,
+                     property,propextent_txt,propvalue,nkill)
+
+# Summary of gtd.turkey structure
+# str(gtd.turkey)
+glimpse(gtd.turkey)
+
+
+```
+
+The data set that will use in project and initial exploratory data analysis on it consists of 4,106 observations and 25 variables. 
+
+```{r}
+# Summary by year respect to event and casualties (Pivot)
+gtd.turkey.year= group_by(gtd.turkey, year) %>%
+  summarise(numberOfEvents = length(eventid), numberOfCasualties = sum(nkill, na.rm = TRUE)) %>%
+  ungroup()
+
+gtd.turkey.year
+```
+
+```{r}
+# Summary by provstate respect to event and casualties (Pivot)
+gtd.turkey.provstate= group_by(gtd.turkey, provstate) %>%
+  summarise(numberOfEvents = length(eventid), numberOfCasualties = sum(nkill, na.rm = TRUE)) %>%
+  ungroup()
+
+gtd.turkey.provstate
+```
+
+```{r}
+#Plots
+
+p1<- ggplot(gtd.turkey.year, aes(x = year)) +
+  geom_line(aes(y = numberOfEvents), size = 2,colour = "red") +
+  geom_line(aes(y = numberOfCasualties), size = 2, ,colour = "blue", alpha=0.5) +
+  scale_x_continuous(breaks=seq(1970,2017,1)) +
+  annotate("text", x = c(2010,2010), y = c(1200,1100), label = c("Total Casualities", "Total Attacks"), colour = c("red", "blue"), size = 4)  +
+  ggtitle("Terrorism In Turkey by Years") +
+  theme(axis.text.x = element_text(angle=90, size=8)) +
+  labs(x = "Years", y = "Attacks / Casualities")
+p1
+
+```
+
+
+## References
+
+Dataset source ==> [Global Terrorism Database](https://www.kaggle.com/START-UMD/gtd)
+
+[https://www.kaggle.com/dhrubajitdas/global-terrorism-full-analysis/data](https://www.kaggle.com/dhrubajitdas/global-terrorism-full-analysis/data)
+
+[http://zevross.com/blog/2014/08/04/beautiful-plotting-in-r-a-ggplot2-cheatsheet-3/](http://zevross.com/blog/2014/08/04/beautiful-plotting-in-r-a-ggplot2-cheatsheet-3/)
+
+[http://www.css.cornell.edu/faculty/dgr2/teach/R/R_corregr.pdf](http://www.css.cornell.edu/faculty/dgr2/teach/R/R_corregr.pdf)
+
+[http://start.umd.edu/gtd/downloads/Codebook.pdf](http://start.umd.edu/gtd/downloads/Codebook.pdf)
+
+[https://www.programiz.com/r-programming](https://www.programiz.com/r-programming)
+
+[http://lightonphiri.org/blog/ggplot2-multiple-plots-in-one-graph-using-gridextra](http://lightonphiri.org/blog/ggplot2-multiple-plots-in-one-graph-using-gridextra)
+
+[http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/](http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/)
