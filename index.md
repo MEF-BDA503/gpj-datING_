@@ -5,7 +5,7 @@
 
 ## Case Study: Welcome to University
 
-+ We made some changes on analysis, added more explanatory visualizations for our analysis. We’ve also added an introduction and conclusion part. You can find the updated version of OSYM 2017 case study analysis [here](files/Case_Study_1_Final.html). *Update Date: 03/11/2017*
++ We made some changes on analysis, added more explanatory visualizations for our analysis. We’ve also added an introduction and conclusion part. You can find the updated version of OSYM 2017 case study analysis [here](files/Case_Study_1_Final.html). *(Updated: 03/11/2017)*
 
 + [Here](files/Case_Study.html) you can find our initial studies on OSYM 2017 case study.
 
