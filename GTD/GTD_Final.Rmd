@@ -19,7 +19,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## <span style="color:#e67e22">Group Members</span>
   1. [Bilge Uzuner](https://mef-bda503.github.io/pj-uzunerb/)
   2. [Sefa Erbas](https://mef-bda503.github.io/pj-erbass/)
-  3. [Türkan Sevgili](https://mef-bda503.github.io/pj-sevgilit/)
+  3. [T�rkan Sevgili](https://mef-bda503.github.io/pj-sevgilit/)
   
 ## <span style="color:#e67e22">Data</span>
   + Global Terrorism Data
@@ -28,7 +28,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ### <span style="color:#e67e22">Description</span>
   
 The Global Terrorism Database ([GTD](http://start.umd.edu/gtd/about/)) includes information on terrorist events around the World (205 countries,  more than 33000 cities, from 1970 through 2016 on at least 45 variables for each case, with more recent incidents including information on more than 120 variables
-
 
 
 ### <span style="color:#e67e22">Content and Data fields</span> 
@@ -82,13 +81,13 @@ In this work, we will analyze the various details of terrorist acts in Turkey ov
 
 ## <span style="color:#e67e22">Exploratory Analysis</span>
 
-+ Initial exploratory analysis of GTD dataset and Turkey terrorism statistics can be found below.
++ Load necessary frequently used R Packages and see whole GTD dataset.
 
 ```{r,message=FALSE}
 # Necessary packages to load in 
+library(tidyverse)
 library(ggplot2) # Data visualization
 library(readr) # Read_csv function
-library(tidyverse)
 library(dplyr)
 options(dplyr.width=Inf)
 #Sys.setlocale(locale = "Turkish_Turkey.1254")
@@ -112,8 +111,10 @@ glimpse(turkey.gtd)
 
 ### <span style="color:#e67e22">Data Cleaning</span>
 
+Since there are more than 100 variables, first we selected which variables are meaningful for the analysis for Turkey. Other columns are the sub categories of these informations and not available for all event. 
+
 ```{r,cache=TRUE}
-# Select columns that will use in EDA
+# Select columns that will use in EDA and renaming selected columns
 gtd.turkey = select (turkey.gtd , eventid, year = iyear, month = imonth, day=iday, country_code = country, 
                      country_name=country_txt,region_code=region, region_name=region_txt, provstate,city,
                      latitude,longitude,location,success, attacktype1=attacktype1_txt, 
@@ -126,6 +127,20 @@ glimpse(gtd.turkey)
 ```
 
 The data set that will use in this project and initial exploratory data analysis on it consists of 4,106 observations and 27 variables. 
+
+Secondly we checked the data for the missing/ NA or unmeaningful data;
+
++ -	Event id is unique
++ -	30/31 February is not available
++ - No day 31 is available for the months 2,4,6,9,11
+
+Country code and Region Code is unique for Turkey and Middle East & North Africa which are 209 and 10 approximately.
+
+In the "City" column we see the district information for some of the data so we made the city analysis on "Provstate" column which we found more covenient.
+
+<p></br></p>
+
++ Initial exploratory analysis of GTD dataset and Turkey terrorism statistics can be found below.
 
 It is firstly examined how many terrorist attacks have been recorded in the years since the Global Terrorist Database. (1970-2015)
 
@@ -146,7 +161,10 @@ grid.arrange(plot1,
              ncol=2)
 ```
 
-There is a steady increase over time until the early '90s, after which there is a steady decline until the mid 2000s. What follows is a dramatic increase (and record yearly high, in 2014) in reported attacks.
+In global side, there is a steady increase over time until the early '90s, after which there is a steady decline until the mid 2000s. It is a dramatic increase (and record yearly high, in 2014) in reported attacks.
+
+In Turkey, the upward trend observed at the beginning of the 90s declined along with the 2000s
+It is observed that after 2010, it has entered a new upward trend.
 
 ####Histogram of Attacks by Year
 ```{r,fig.height=5,fig.width=12}
@@ -158,9 +176,9 @@ ggplot(gtd.turkey, aes(gtd.turkey$year)) +
   ggtitle('Histogram of Attacks by Year')
 ```
 
-####Histogram of Attacks by Month
-We checked which months are most dangerous.
+As shown above figure,the data for year 1993 is missing the source data.
 
+####Histogram of Attacks by Month
 ```{r,fig.height=5,fig.width=12}
 # Data Preparation
 gtd.turkey.month<-gtd.turkey%>%
@@ -197,7 +215,9 @@ ggplot(gtd.turkey.month, aes(x=month, y=numberOfEvents)) +
   theme(axis.text.x = element_text(angle=45, vjust=0.6, size=10))
 ```
 
-Tersten sıralayalım.yaz sezonu artıyor.Datada month kolonu 0 olan satirlarin da oldugunu bu tablodan görmüs olduk.
+We checked which months are most dangerous. For some of the events the month information is "0". It is because the month information is not known during the creation of the database. We do not need to manipulate the data and let it stay as zero. Figure shows the day information is missing and seen as zero in the data for some of the events.
+
+When Turkey is busy with foreign visitors and the tourism season peaks, it is seen that the terorist attacks also rise in summer months.
 
 ####Frequency of Attacks by City
 ```{r,fig.height=5,fig.width=12}
@@ -212,7 +232,12 @@ gtd.turkey %>%
       scale_fill_manual(values = c('#e67e22', '#2980b9'),guide=FALSE)
 ```
 
+When you look at the cities most subject to terrorist attacks; Istanbul, Ankara, Diyarbakir and Sirnak attrack a great deal of attention.
+
+Istanbul; which is a metropolis of Turkey and draws attention with its crowded population become the target of more than 1,000 terrorist attacks. While some cities face with less terrorist attacks and can be considered relatively safe (Amasya, Bartin, Burdur, �ankiri, Edirne, Isparta, Kirklareli, Kirsehir, etc.)at the same period.
+
 Where are the places that has been attacked > 50 in Turkey between 1970 - 2016?
+
 ```{r,fig.height=5,fig.width=9,message=FALSE}
 library(scales)
 theme_set(theme_classic())
@@ -236,7 +261,7 @@ ggplot(gtd.turkey.provstate_50, aes(x=provstate, y=numberOfEvents)) +
        caption="Dot Plot") +  
   coord_flip()
 ```
-  
+
 ####Success/Failure Rates
 ```{r,fig.height=5,fig.width=12,fig.show='hold',fig.align='center',message=FALSE}
 library(plotrix)
@@ -269,6 +294,11 @@ pie2<-pie3D(pct2,col = col, explode=0.1,
     labels =labels2, main = "Global Success/Failure Rate")
 ```
 
+Success failure rates deemed to be a good measure; about levels of operational risk regarding terrorism risk management, domestic intelligence and reliability of security countermeasures.
+
+Between 1970 and 2016;the global failure rate is relatively higher than Turkey.
+
+What is the failure rate of attacks over the years?
 ```{r,fig.height=5,fig.width=12}
 gtd.turkey %>%
   mutate(total = 1) %>% # total attacks that year (creates a new variable)
@@ -288,6 +318,8 @@ rbind(failure,success) %>%
   labs(x = "Years", y = "rate of success / failure")
 ```
 
+It is seen that the ratio which is at a certain level in each period; shows an increasing tendency in recent years.
+
 ####Frequency of Attacks by Attacktype
 ```{r,fig.height=5,fig.width=9}
 gtd.turkey %>%
@@ -301,6 +333,8 @@ gtd.turkey %>%
       ggtitle('Frequency of Attacks by Attacktype') +
       coord_flip()
 ```
+
+Above figure shows the number of terrorist attacks in the Turkey from 1970 to 2016, by attack type. The most common form of terrorist attack in the Turkey was a **Bombing/Explosion** type attack. 
 
 #### Frequency of Attacks by Target type
 ```{r,fig.height=5,fig.width=9}
@@ -316,7 +350,6 @@ gtd.turkey %>%
       coord_flip()
 ```
 
-
 #### Frequency of Attacks by Weapon type
 ```{r,fig.height=5,fig.width=9}
 gtd.turkey %>%
@@ -330,7 +363,6 @@ gtd.turkey %>%
       ggtitle('Frequency of Attacks by Weapon type') +
       coord_flip()
 ```
-
 
 #### Frequency of Group Name
 ```{r,fig.height=5,fig.width=9}
@@ -346,7 +378,6 @@ gtd.turkey %>%
       ggtitle('Frequency of Attacks by Group Name') +
       coord_flip()
 ```
-
 
 #### Change in Number of Attacks by Terrorist Groups in last two years
 ```{r,fig.height=9,fig.width=12,message=FALSE}
@@ -388,8 +419,9 @@ plot + theme(panel.background = element_blank(),
           panel.border = element_blank(),
           plot.margin = unit(c(0.1,0.2,0.1,0.2), "cm"))
 ```
-          
-          
+  
+This graphic shows the number of attacks of the terrorist groups which have attacked in last two years (2015 -2016) comparing the previous year. When we ignore the unknown attacks, it seems that 3 of 4 groups have increased the total number attacks.
+
 #### Attacks vs Casualities
 ```{r}
 # Summary by year respect to event and casualties (Pivot)
@@ -410,6 +442,7 @@ ggplot(gtd.turkey.year, aes(x = year)) +
   labs(x = "year", y = "attacks / casualities")
 ```
 
+This graph compares the attack number with total casualties per year. It is understood that up to 450 attacks, total casualties have occurred with same level with total attacks. However, even total attacks increase up to 800, total casualties are not influenced majorly from the attacks number. 
 
 #### Killed vs Wounded Rate
 ```{r,fig.height=5,fig.width=12}
@@ -430,6 +463,8 @@ rbind(killed,wounded) %>%
   ggtitle("Rate of Killed/Wounded by Years") +
   labs(x = "Years", y = "rate of killed/wounded")
 ```
+
+This graphic summarizes rate of death and wounded by years. It is obviously seen in 90's that death rate is much more than wounded rate for each attack. However, in recent years this situation has reversed and wounded rate by virtue of the attacks has dramatically started to increase. This case can be explained in two possibilities. One of them is, increasing the total attacks which may cause more people, the other is lower incidence of these attacks.
 
 #### gname vs nkill 
 ```{r,fig.height=5,fig.width=12}
@@ -455,12 +490,16 @@ ggplot(gnamevnkill, aes(x=gname, y=sd, label=sd)) +
   coord_flip()
 ```
 
+This graph compares each group which have caused more than 5 deaths in average due to their attacks with the average of the means the total group's. It is used standard normal distribution formula to see which terrorist group's death cause are in place above and below in terms of population mean.
+
 #### Yearly terrorist attacks by Attack type  
 ```{r,fig.height=5,fig.width=12}
   ggplot(data=gtd.turkey, aes(x=year,fill=attacktype1)) + 
   geom_bar() + ggtitle("Yearly terrorist attacks by attack type")+         
     labs(x = "Years", y = "Number of Attacks")
 ```
+
+This graphics shows, which attack type is used by terrorist groups to organize an attack by years. It is seen that the most popular attack types are armed assault and bombing almost each year. 
 
 #### Terrorist attacks in Turkey between 1970-2016 by attack type
 ```{r,fig.height=5,fig.width=12}
@@ -469,6 +508,8 @@ ggplot(gtd.turkey, aes(x = year))+ labs(title ="Terrorist attacks in Turkey betw
   facet_wrap(~attacktype1,scales = "free", ncol = 3) + 
   theme(axis.text.x = element_text(angle=45,hjust = 1, size = 8)) +
   theme(strip.text = element_text(size = 12))
+
+##Inspiration:"https://www.kaggle.com/pranav84/visualizing-terrorist-attacks-on-india"
 ```
 
 #### Causalities in Turkey between 1970-2016 by attack type
@@ -517,15 +558,17 @@ par(mfrow = c(1,3))
 wordcloud(gtd.turkey$targtype1,max.words = 100,random.order = FALSE,colors=brewer.pal(8, "Dark2"))
 wordcloud(gtd.turkey$attacktype1,max.words = 100,random.order = FALSE,colors=brewer.pal(8, "Dark2"))
 wordcloud(gtd.turkey$gname,max.words = 100,random.order = FALSE,colors=brewer.pal(8, "Dark2"))
+
+##Inspiration:"https://www.kaggle.com/bharathsivaraman/an-untold-story-of-terrorism-in-india/notebook"
 ```
 
 ### <span style="color:#e67e22">Analysis on Map</span>
 
 ```{r,fig.height=5,fig.width=12,message=FALSE}
-library(sp)
+library(sp)           # spatial data classes and functions
 library(maptools)
 library(RColorBrewer)
-library(maps)
+library(maps)         # powerful and flexible mapping package
 library(mapdata)
 
 lon_lat <- data.frame(lon=gtd.turkey$longitude, lat=gtd.turkey$latitude)
@@ -544,17 +587,22 @@ map_by_weapon<- ggplot() + geom_polygon(data = map_tr, aes(x=long, y = lat, grou
 map_by_weapon<-map_by_weapon+geom_point(data=gtd.turkey,aes(x=longitude,y=latitude,color=as.factor(weaptype1)))
 map_by_weapon<-map_by_weapon+scale_color_brewer(palette="Paired")+facet_wrap(~weaptype1,ncol=3)+guides(color=F)
 map_by_weapon
+
+##Inspiration:"https://www.kaggle.com/aiswaryaramachandran/terror-attacks-against-india-since-2000"
 ```
+
+From the visualisation above, we can observe that Firearms and Bombing/Explosion is the most common type of attack and highly prevalent in especially southeast part of Turkey.
 
 ### <span style="color:#e67e22">Interactive Data Map with Shiny module</span>
 
-[Interactive Data Map]( https://sevgilit.shinyapps.io/sevgilit/)
-
+[Interactive Data Map](https://sevgilit.shinyapps.io/GTD_Shiny/)
 
 <center><div style="width:1000px; height=900px">![](D:/Users/tkartalkaya/Desktop/R Scripts/GTD/Shiny.PNG)</div></center>
 
-```{r,eval=FALSE}
-<center><div style="width:1000px; height=900px">![](https://github.com/MEF-BDA503/gpj-datING_/blob/master/GTD/Shiny.PNG)</div></center>
+```{r,echo=FALSE}
+#<center><div style="width:1000px; #height=900px">![](https://firebasestorage.googleapis.com/v0/b/turkan-a3795.appspot.com/o/Shiny.PNG?alt=media&token=d28#4ac2d-3380-4fa9-8a33-aef6cd2503dc)</div></center>
+  
+#<center><div style="width:1000px; #height=900px">![](https://raw.githubusercontent.com/MEF-BDA503/gpj-datING_/master/GTD/Shiny.PNG)</div></center>
 ```
 
 
@@ -589,6 +637,8 @@ map_by_weapon
 9. [https://www.harding.edu/fmccown/r/](https://www.harding.edu/fmccown/r/
 
 10. [https://uc-r.github.io/lollipop](https://uc-r.github.io/lollipop)
+
+11. [https://www.kaggle.com/iklotho/terror-attacks-in-turkey/notebook](https://www.kaggle.com/iklotho/terror-attacks-in-turkey/notebook)
 
 ***Shiny***
 
