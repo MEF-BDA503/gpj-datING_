@@ -1,7 +1,9 @@
 
 ## Proposal Phase of datING Project Group
 
-+ You can see the proposal phase of our group project [here](GTD/GTD_Final.html).
++ You can find the minimal working report of our group project [here](GTD/GTD_Final.html).
+
++ You can see the proposal phase of our group project [here](GTD/GTD.html).
 
 ## Case Study: Welcome to University
 
