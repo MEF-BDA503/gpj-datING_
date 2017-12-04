@@ -1,7 +1,7 @@
 
 ## datING Group Project 
 
-+ Also [draft presentation] (GTD/GTD_presentation.html) of our group project is prepared in RMarkdown ioslides.
++ Also [draft presentation](GTD/GTD_presentation.html) of our group project is prepared in RMarkdown ioslides.
 
 + You can find the minimal working report of our group project [here](GTD/GTD_Final.html).
 
