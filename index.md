@@ -7,8 +7,7 @@
   2. [Sefa Erbas](https://mef-bda503.github.io/pj-erbass/)
   3. [Türkan Sevgili](https://mef-bda503.github.io/pj-sevgilit/)
   
-<p></br></p>
-  
+
 
 + Also [draft presentation](GTD/GTD_presentation.html) of our group project is prepared in RMarkdown ioslides.
 
