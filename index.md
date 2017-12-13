@@ -7,7 +7,7 @@
   2. [Sefa Erbas](https://mef-bda503.github.io/pj-erbass/)
   3. [Türkan Sevgili](https://mef-bda503.github.io/pj-sevgilit/)
 
-+ You can find group datING's final project report ([html](GTD_Project/GTD_Final.html) & [pdf](GTD_Project/GTD_Final.pdf)) and [presentation](GTD_Project/GTD_presentation.html). You can also reach all other project files [here](GTD_Project).
++ You can find group datING's final project report ([html](GTD_Project/GTD_Final.html) & [pdf](GTD_Project/GTD_Final.pdf)) and [presentation](GTD_Project/GTD_presentation.html). You can also reach all other project files [here](GTD_Project). *(Updated: 13/12/2017)*
   
 + You can see the peer review of group Error for Proposal Phase and Minimal Working Report [here](GTD/Peer_Review.html).
 
